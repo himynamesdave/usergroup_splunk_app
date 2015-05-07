@@ -1,0 +1,29 @@
+<dashboard>
+  <label>User Group Admin</label>
+  <row>
+    <html>
+      <h2>User Group Management</h2>
+      <ul>
+        <li>
+          <a href="usergroupdatahtml">Add / Delete User Group</a>
+        </li>
+      </ul>
+    </html>
+  </row>
+  <row>
+    <html>
+      <h2>User Group Check In Options</h2>
+      <ul>
+        <li>
+          <a href="appjobrolehtml">Add / Delete Attendee Roles</a>
+        </li>
+        <li>
+          <a href="appproducthtml">Add / Delete Attendee Products</a>
+        </li>
+        <li>
+          <a href="appusecasehtml">Add / Delete Attendee Use Cases</a>
+        </li>
+      </ul>
+    </html>
+  </row>
+</dashboard>

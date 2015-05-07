@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>User Group Admin | Splunk</title>
+    <link rel="shortcut icon" href="{{SPLUNKWEB_URL_PREFIX}}/static/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/en-US/static/@245427/css/build/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/en-US/static/@245427/css/build/pages/dashboard-simple-bootstrap.min.css" />
+    <!--[if IE 7]><link rel="stylesheet" href="{{SPLUNKWEB_URL_PREFIX}}/static/css/sprites-ie7.css" /><![endif]-->
+</head>
+<body class="simplexml preload locale-en">
+<!-- 
+BEGIN LAYOUT
+This section contains the layout for the dashboard. Splunk uses proprietary
+styles in <div> tags, similar to Bootstrap's grid system. 
+-->
+<a class="navSkip" href="#navSkip" tabindex="1">Screen reader users, click here to skip the navigation bar</a>
+<div class="header splunk-header">
+        <div id="placeholder-splunk-bar">
+            <a href="{{SPLUNKWEB_URL_PREFIX}}/app/launcher/home" class="brand" title="splunk &gt; listen to your data">splunk<strong>&gt;</strong></a>
+        </div>
+            <div id="placeholder-app-bar"></div>
+</div>
+<a id="navSkip"></a>
+<div class="dashboard-body container-fluid main-section-body" data-role="main">
+    <h2>Add / Delete User Group</h2>
+
+    <form id="formUserGroup">
+    <div class="fieldset">
+        <div class="input input-text" id="input1">
+            <label>addUserGroupCity</label>
+        </div>
+        <div class="input input-text" id="input2">
+            <label>addUserGroupCode</label>
+        </div>
+        <div class="input input-text" id="input3">
+            <label>addUserGroupAddress</label>
+        </div>
+        <div class="input input-text" id="input4">
+            <label>addUserGroupZIP</label>
+        </div>
+        <div class="input input-text" id="input5">
+            <label>addUserGroupOrganiserEmail</label>
+        </div>
+        <div class="input input-text" id="input6">
+            <label>addUserGroupMeetupPage</label>
+        </div>
+        <div class="input input-dropdown" id="input7">
+            <label>addUserGroupStartDay</label>
+        </div>
+        <div class="input input-dropdown" id="input8">
+            <label>addUserGroupStartMonth</label>
+        </div>
+        <div class="input input-dropdown" id="input9">
+            <label>addUserGroupStartYear</label>
+        </div>
+        <div class="form-submit" id="search_btn">
+            <button class="btn btn-primary submit">Submit</button>
+        </div>
+    
+    <div>
+        <div class="input input-text" id="input10">
+            <label>Enter a Key ID from the table below to delete a row.</label>
+        </div>
+        <div><button id="deleteRecord">Delete event</button></div>
+    </div>
+    <br>
+    </form>
+
+
+    <div id="row1" class="dashboard-row dashboard-row1">
+        <div id="panel1" class="dashboard-cell" style="width: 100%;">                
+            <div class="panel-element-row">
+                <div id="element1" class="dashboard-element table" style="width: 100%">
+                    <div class="panel-head">
+                        <h3>Current events</h3>
+                    </div>
+                    <div class="panel-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="footer"></div>
+
+<!-- 
+END LAYOUT
+-->
+
+<script src="{{SPLUNKWEB_URL_PREFIX}}/config?autoload=1"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/i18n.js"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/i18ncatalog?autoload=1"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/build/simplexml.min/config.js"></script>
+<script type="text/javascript">
+require.config({
+    baseUrl: "{{SPLUNKWEB_URL_PREFIX}}/static/js",
+    waitSeconds: 0 // Disable require.js load timeout
+});
+
+//
+// LIBRARY REQUIREMENTS
+//
+// In the require function, we include the necessary libraries and modules for
+// the HTML dashboard. Then, we pass variable names for these libraries and
+// modules as function parameters, in order.
+// 
+// When you add libraries or modules, remember to retain this mapping order
+// between the library or module and its function parameter. You can do this by
+// adding to the end of these lists, as shown in the commented examples below.
+
+require([
+    "splunkjs/mvc",
+    "splunkjs/mvc/utils",
+    "splunkjs/mvc/tokenutils",
+    "underscore",
+    "jquery",
+    "splunkjs/mvc/simplexml",
+    "splunkjs/mvc/headerview",
+    "splunkjs/mvc/footerview",
+    "splunkjs/mvc/simplexml/dashboardview",
+    "splunkjs/mvc/simplexml/dashboard/panelref",
+    "splunkjs/mvc/simplexml/element/chart",
+    "splunkjs/mvc/simplexml/element/event",
+    "splunkjs/mvc/simplexml/element/html",
+    "splunkjs/mvc/simplexml/element/list",
+    "splunkjs/mvc/simplexml/element/map",
+    "splunkjs/mvc/simplexml/element/single",
+    "splunkjs/mvc/simplexml/element/table",
+    "splunkjs/mvc/simpleform/formutils",
+    "splunkjs/mvc/simplexml/eventhandler",
+    "splunkjs/mvc/simpleform/input/dropdown",
+    "splunkjs/mvc/simpleform/input/radiogroup",
+    "splunkjs/mvc/simpleform/input/multiselect",
+    "splunkjs/mvc/simpleform/input/checkboxgroup",
+    "splunkjs/mvc/simpleform/input/text",
+    "splunkjs/mvc/simpleform/input/timerange",
+    "splunkjs/mvc/simpleform/input/submit",
+    "splunkjs/mvc/searchmanager",
+    "splunkjs/mvc/savedsearchmanager",
+    "splunkjs/mvc/postprocessmanager",
+    "splunkjs/mvc/simplexml/urltokenmodel"
+    // Add comma-separated libraries and modules manually here, for example:
+    // ..."splunkjs/mvc/simplexml/urltokenmodel",
+    // "splunkjs/mvc/checkboxview"
+    ],
+    function(
+        mvc,
+        utils,
+        TokenUtils,
+        _,
+        $,
+        DashboardController,
+        HeaderView,
+        FooterView,
+        Dashboard,
+        PanelRef,
+        ChartElement,
+        UserGroupElement,
+        HtmlElement,
+        ListElement,
+        MapElement,
+        SingleElement,
+        TableElement,
+        FormUtils,
+        UserGroupHandler,
+        DropdownInput,
+        RadioGroupInput,
+        MultiSelectInput,
+        CheckboxGroupInput,
+        TextInput,
+        TimeRangeInput,
+        SubmitButton,
+        SearchManager,
+        SavedSearchManager,
+        PostProcessManager,
+        UrlTokenModel
+
+        // Add comma-separated parameter names here, for example: 
+        // ...UrlTokenModel, 
+        // CheckboxView
+        ) {
+
+
+
+        var pageLoading = true;
+
+
+        // 
+        // TOKENS
+        //
+        
+        // Create token namespaces
+        var urlTokenModel = new UrlTokenModel();
+        mvc.Components.registerInstance('url', urlTokenModel);
+        var defaultTokenModel = mvc.Components.getInstance('default', {create: true});
+        var submittedTokenModel = mvc.Components.getInstance('submitted', {create: true});
+
+        urlTokenModel.on('url:navigate', function() {
+            defaultTokenModel.set(urlTokenModel.toJSON());
+            if (!_.isEmpty(urlTokenModel.toJSON()) && !_.all(urlTokenModel.toJSON(), _.isUndefined)) {
+                submitTokens();
+            } else {
+                submittedTokenModel.clear();
+            }
+        });
+
+        // Initialize tokens
+        defaultTokenModel.set(urlTokenModel.toJSON());
+
+        function submitTokens() {
+            // Copy the contents of the defaultTokenModel to the submittedTokenModel and urlTokenModel
+            FormUtils.submitForm({ replaceState: pageLoading });
+        }
+
+        function setToken(name, value) {
+            defaultTokenModel.set(name, value);
+            submittedTokenModel.set(name, value);
+        }
+
+        function unsetToken(name) {
+            defaultTokenModel.unset(name);
+            submittedTokenModel.unset(name);
+        }
+
+        
+        
+        //
+        // SEARCH MANAGERS
+        //
+
+        var search1 = new SearchManager({
+            "id": "search1",
+            "earliest_time": "0",
+            "search": "| inputlookup kvstore_usergroup_lookup | eval KeyID = _key | table KeyID, addUserGroupCity, addUserGroupCode, addUserGroupAddress, addUserGroupZIP, addUserGroupOrganiserEmail, addUserGroupMeetupPage, addUserGroupStartDay, addUserGroupStartMonth, addUserGroupStartYear",
+            "status_buckets": 0,
+            "cancelOnUnload": true,
+            "latest_time": "$latest$",
+            "app": utils.getCurrentApp(),
+            "auto_cancel": 90,
+            "preview": true,
+            "runWhenTimeIsUndefined": false
+        }, {tokens: true, tokenNamespace: "submitted"});
+
+
+
+        //
+        // SPLUNK HEADER AND FOOTER
+        //
+
+        new HeaderView({
+            id: 'header',
+            section: 'dashboards',
+            el: $('.header'),
+            acceleratedAppNav: true,
+            useSessionStorageCache: true,
+            splunkbar: true,
+            appbar: true,
+            litebar: false,
+        }, {tokens: true}).render();
+
+        new FooterView({
+            id: 'footer',
+            el: $('.footer')
+        }, {tokens: true}).render();
+
+
+        //
+        // DASHBOARD EDITOR
+        //
+
+        new Dashboard({
+            id: 'dashboard',
+            el: $('.dashboard-body'),
+            showTitle: true,
+            editable: true
+        }, {tokens: true}).render();
+
+
+        //
+        // VIEWS: VISUALIZATION ELEMENTS
+        //
+
+        var element1 = new TableElement({
+            "id": "element1",
+            "count": 10,
+            "dataOverlayMode": "none",
+            "drilldown": "row",
+            "rowNumbers": "undefined",
+            "wrap": "undefined",
+            "managerid": "search1",
+            "el": $('#element1')
+        }, {tokens: true, tokenNamespace: "submitted"}).render();
+        
+
+
+        //
+        // VIEWS: FORM INPUTS
+        //
+        var input1 = new DropdownInput({
+            "id": "input1",
+            "choices": [
+                {"label": "Adelaide", "value": "Adelaide"},
+                {"label": "Arizona", "value": "Arizona"},
+                {"label": "Atlanta", "value": "Atlanta"},
+                {"label": "Boston", "value": "Boston"},
+                {"label": "Canberra", "value": "Canberra"},
+                {"label": "Dallas", "value": "Dallas"},
+                {"label": "DC", "value": "DC"},
+                {"label": "Houston", "value": "Houston"},
+                {"label": "LA", "value": "LA"},
+                {"label": "London", "value": "London"},
+                {"label": "Melbourne", "value": "Melbourne"},
+                {"label": "Minnesota", "value": "Minnesota"},
+                {"label": "Missouri", "value": "Missouri"},
+                {"label": "Nashville", "value": "Nashville"},
+                {"label": "Nebraska", "value": "Nebraska"},
+                {"label": "Panera", "value": "Panera"},
+                {"label": "Paris", "value": "Paris"},
+                {"label": "Philadelphia", "value": "Philadelphia"},
+                {"label": "SanAntonio", "value": "SanAntonio"},
+                {"label": "SanDiego", "value": "SanDiego"},
+                {"label": "BayArea", "value": "BayArea"},
+                {"label": "StLouis", "value": "StLouis"},
+                {"label": "Sydney", "value": "Sydney"},
+                {"label": "Raleigh", "value": "Raleigh"}
+            ],
+            "showClearButton": true,
+            "selectFirstChoice": false,
+            "value": "$form.addUserGroupCity$",
+            "el": $('#input1')
+        }, {tokens: true}).render();
+
+        input1.on("change", function(newValue) {
+            FormUtils.handleValueChange(input1);
+        });
+    
+        var input2 = new TextInput({
+            "id": "input2",
+            "value": "$form.addUserGroupCode$",
+            "el": $('#input2')
+        }, {tokens: true}).render();
+
+        input2.on("change", function(newValue) {
+            FormUtils.handleValueChange(input2);
+        });
+
+        var input3 = new TextInput({
+            "id": "input3",
+            "value": "$form.addUserGroupAddress$",
+            "el": $('#input3')
+        }, {tokens: true}).render();
+
+        input3.on("change", function(newValue) {
+            FormUtils.handleValueChange(input3);
+        });
+
+        var input4 = new TextInput({
+            "id": "input4",
+            "value": "$form.addUserGroupZIP$",
+            "el": $('#input4')
+        }, {tokens: true}).render();
+
+        input4.on("change", function(newValue) {
+            FormUtils.handleValueChange(input4);
+        });
+    
+        var input5 = new TextInput({
+            "id": "input5",
+            "value": "$form.addUserGroupOrganiserEmail$",
+            "el": $('#input5')
+        }, {tokens: true}).render();
+
+        input5.on("change", function(newValue) {
+            FormUtils.handleValueChange(input5);
+        });
+
+        var input6 = new TextInput({
+            "id": "input6",
+            "value": "$form.addUserGroupMeetupPage$",
+            "el": $('#input6')
+        }, {tokens: true}).render();
+
+        input6.on("change", function(newValue) {
+            FormUtils.handleValueChange(input6);
+        });
+
+    
+        var input7 = new DropdownInput({
+            "id": "input7",
+            "choices": [
+                {"label": "1", "value": "1"},
+                {"label": "2", "value": "2"},
+                {"label": "3", "value": "3"},
+                {"label": "4", "value": "4"},
+                {"label": "5", "value": "5"},
+                {"label": "6", "value": "6"},
+                {"label": "7", "value": "7"},
+                {"label": "8", "value": "8"},
+                {"label": "9", "value": "9"},
+                {"label": "10", "value": "10"},
+                {"label": "11", "value": "11"},
+                {"label": "12", "value": "12"},
+                {"label": "13", "value": "13"},
+                {"label": "14", "value": "14"},
+                {"label": "15", "value": "15"},
+                {"label": "16", "value": "16"},
+                {"label": "17", "value": "17"},
+                {"label": "18", "value": "18"},
+                {"label": "19", "value": "19"},
+                {"label": "20", "value": "20"},
+                {"label": "21", "value": "21"},
+                {"label": "22", "value": "22"},
+                {"label": "23", "value": "23"},
+                {"label": "24", "value": "24"},
+                {"label": "25", "value": "25"},
+                {"label": "26", "value": "26"},
+                {"label": "27", "value": "27"},
+                {"label": "28", "value": "28"},
+                {"label": "29", "value": "29"},
+                {"label": "30", "value": "30"},
+                {"label": "31", "value": "31"}
+            ],
+            "showClearButton": true,
+            "selectFirstChoice": false,
+            "value": "$form.addUserGroupStartDay$",
+            "el": $('#input7')
+        }, {tokens: true}).render();
+
+        input7.on("change", function(newValue) {
+            FormUtils.handleValueChange(input7);
+        });
+
+    
+        var input8 = new DropdownInput({
+            "id": "input8",
+            "choices": [
+                {"label": "Jan", "value": "01"},
+                {"label": "Feb", "value": "02"},
+                {"label": "Mar", "value": "03"},
+                {"label": "Apr", "value": "04"},
+                {"label": "May", "value": "05"},
+                {"label": "Jun", "value": "06"},
+                {"label": "Jul", "value": "07"},
+                {"label": "Aug", "value": "08"},
+                {"label": "Sept", "value": "09"},
+                {"label": "Oct", "value": "10"},
+                {"label": "Nov", "value": "11"},
+                {"label": "Dec", "value": "12"}
+            ],
+            "showClearButton": true,
+            "selectFirstChoice": false,
+            "value": "$form.addUserGroupStartMonth$",
+            "el": $('#input8')
+        }, {tokens: true}).render();
+
+        input8.on("change", function(newValue) {
+            FormUtils.handleValueChange(input8);
+        });
+
+    
+        var input9 = new DropdownInput({
+            "id": "input9",
+            "choices": [
+                {"label": "2015", "value": "2015"},
+                {"label": "2016", "value": "2016"}
+            ],
+            "showClearButton": true,
+            "selectFirstChoice": false,
+            "value": "$form.addUserGroupStartYear$",
+            "el": $('#input9')
+        }, {tokens: true}).render();
+
+        input9.on("change", function(newValue) {
+            FormUtils.handleValueChange(input9);
+        });
+
+        var input10 = new TextInput({
+            "id": "input10",
+            "value": "$form.KeyID$",
+            "el": $('#input10')
+        }, {tokens: true}).render();
+
+        input10.on("change", function(newValue) {
+            FormUtils.handleValueChange(input10);
+        });
+
+        // 
+        // SERVICE OBJECT
+        //
+
+        // Create a service object using the Splunk SDK for JavaScript
+        // to send REST requests
+        var service = mvc.createService({ owner: "nobody" });
+
+        // 
+        // DELETE BUTTON
+        //
+
+        // Call this function when the Delete Record button is clicked
+        $("#deleteRecord").click(function() {
+            // Get the value of the key ID field
+            var tokens = mvc.Components.getInstance("default");
+            var form_keyid = tokens.get("KeyID");
+
+            // Delete the record that corresponds to the key ID using
+            // the del method to send a DELETE request
+            // to the storage/collections/data/{collection}/ endpoint
+            service.del("storage/collections/data/usergroupcollection/" + encodeURIComponent(form_keyid))
+                .done(function() { 
+                    // Run the search again to update the table
+                    search1.startSearch(); 
+                });
+            return false;
+        }); 
+
+        // 
+        // SUBMIT FORM DATA
+        //
+
+        var submit = new SubmitButton({
+            id: 'submit',
+            el: $('#search_btn')
+        }, {tokens: true}).render();
+
+        submit.on("submit", function() {
+            submitTokens();
+
+            // When the Submit button is clicked, get all the form fields by accessing token values
+            var tokens = mvc.Components.getInstance("default");
+            var form_addUserGroupCity = tokens.get("addUserGroupCity");
+            var form_addUserGroupCode = tokens.get("addUserGroupCode");
+            var form_addUserGroupAddress = tokens.get("addUserGroupAddress");
+            var form_addUserGroupZIP = tokens.get("addUserGroupZIP");
+            var form_addUserGroupOrganiserEmail = tokens.get("addUserGroupOrganiserEmail");
+            var form_addUserGroupMeetupPage = tokens.get("addUserGroupMeetupPage");
+            var form_addUserGroupStartDay = tokens.get("addUserGroupStartDay");
+            var form_addUserGroupStartMonth = tokens.get("addUserGroupStartMonth");
+            var form_addUserGroupStartYear = tokens.get("addUserGroupStartYear");
+            
+            // Create a dictionary to store the field names and values
+            var record = { 
+                "addUserGroupCity": form_addUserGroupCity, 
+                "addUserGroupCode": form_addUserGroupCode, 
+                "addUserGroupAddress": form_addUserGroupAddress,
+                "addUserGroupZIP": form_addUserGroupZIP,
+                "addUserGroupOrganiserEmail": form_addUserGroupOrganiserEmail,
+                "addUserGroupMeetupPage": form_addUserGroupMeetupPage,
+                "addUserGroupStartDay": form_addUserGroupStartDay,
+                "addUserGroupStartMonth": form_addUserGroupStartMonth,
+                "addUserGroupStartYear": form_addUserGroupStartYear
+            }; 
+
+             // Use the request method to send a REST POST request
+            // to the storage/collections/data/{collection}/ endpoint
+            service.request(
+                "storage/collections/data/usergroupcollection/",
+                "POST",
+                null,
+                null,
+                JSON.stringify(record),
+                {"Content-Type": "application/json"},
+                null)
+                    .done(function() { 
+                         // Run the search again to update the table
+                        search1.startSearch();
+
+                        // Clear the form fields 
+                        $("#formUserGroup input[type=text]").val(""); 
+                    });
+        });
+
+        // Initialize time tokens to default
+        if (!defaultTokenModel.has('earliest') && !defaultTokenModel.has('latest')) {
+            defaultTokenModel.set({ earliest: '0', latest: '' });
+        }
+
+        if (!_.isEmpty(urlTokenModel.toJSON())){
+            submitTokens();
+        }
+
+
+        //
+        // DASHBOARD READY
+        //
+
+        DashboardController.ready();
+        pageLoading = false;
+
+    }
+);
+</script>
+</body>
+</html>
