@@ -1,6 +1,6 @@
 # Splunk User Group Check-in Manager
-## A Splunk App to manage check-in data for Splunk User Groups
+## A Splunk App to manage user group data for Splunk User Groups
 
-http://checkin.splunkstart.com
+http://ug.splunkstart.com:8000
 
 Currently in beta.
