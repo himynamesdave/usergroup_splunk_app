@@ -9,7 +9,7 @@ import getopt, sys, os
 import subprocess
 
 def main():
-  WEBHOOK_URL = [INSERT_URL_HERE]
+  WEBHOOK_URL = "INSERT_URL_HERE"
   headers = {'Content-Type': 'application/json'}
 
   text = '%s: <%s|Click here> for more details.' % (sys.argv[4], sys.argv[6])
