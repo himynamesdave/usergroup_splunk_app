@@ -1,0 +1,37 @@
+<form>
+  <label>Export</label>
+  <fieldset submitButton="true">
+    <input type="dropdown" token="groupCityToken">
+      <label>City</label>
+      <search>
+        <query>index="splunkusergroups" | fields group_city</query>
+      </search>
+      <fieldForLabel>group_city</fieldForLabel>
+      <fieldForValue>group_city</fieldForValue>
+      <prefix>group_city=</prefix>
+      <choice value="*">All</choice>
+    </input>
+    <input type="dropdown" token="eventIdToken">
+      <label>Event ID</label>
+      <search>
+        <query>index="splunkusergroups" $groupCityToken$ | fields event_id</query>
+      </search>
+      <fieldForLabel>event_id</fieldForLabel>
+      <fieldForValue>event_id</fieldForValue>
+      <prefix>event_id=</prefix>
+      <choice value="*">All</choice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Click export icon below table to export data to CSV</title>
+        <search>
+          <query>index="splunkusergroups" $groupCityToken$ $eventIdToken$| table _time group_city name email role use_cases products notes</query>
+          <earliest></earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+</form>
